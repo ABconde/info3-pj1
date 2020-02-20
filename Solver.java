@@ -1,11 +1,14 @@
+import java.util.ArrayList;
+
 /*
     Esta es su clase principal. El unico metodo que debe implementar es
     public String[] solve(Maze maze)
     pero es libre de crear otros metodos y clases en este u otro archivo que desee.
 */
 public class Solver{
-    private int maxMoves;
-    private int exitSpace;
+    private ArrayList<String> routes = new ArrayList<>();
+    private Maze maze;
+    private ArrayList<Integer> currentRoute = new ArrayList<>();
 
 
     public Solver(){
@@ -14,9 +17,67 @@ public class Solver{
 
     public String[] solve(Maze maze){
         //Implemente su metodo aqui. Sientase libre de implementar métodos adicionales
-        String[] str = new String[1];
-        str[0] = "[-1]";
+        this.maze = maze;
+        System.out.println("start:" + maze.getStartSpace());
+        System.out.println("end:" + maze.getExitSpace());
+        generateRoutes(maze.getStartSpace());
+        String[] str = convertArray(routes);
+        routes = new ArrayList<>();
         return str;
     }
+
+    public String generateRoutes(int currentPosition){
+        
+        currentRoute.add(currentPosition);
+
+        int[] openRoutes = new int[]{    
+            this.maze.moveNorth(currentPosition),
+            this.maze.moveEast(currentPosition),
+            this.maze.moveSouth(currentPosition),
+            this.maze.moveWest(currentPosition)
+        };
+
+        for(int i = 0; i < openRoutes.length; i++){
+            int route = openRoutes[i];
+
+            if(route == currentPosition){
+                continue;
+            }
+
+            if(route == this.maze.getExitSpace()){
+                currentRoute.add(route);
+                addRoute();
+                return null;
+            }
+
+            if(this.maze.getMaxMoves() == currentRoute.size()-1){
+                currentRoute = new ArrayList<>();
+                return null;
+            }
+            
+            generateRoutes(route);
+
+        }
+        return null;
+    }
+
+    public void addRoute(){
+        String routeString = "[";
+        for(int route : currentRoute){
+            routeString = routeString + route + ", ";
+        }
+        routeString = routeString.substring(0, routeString.length()-2) + "]";
+        routes.add(routeString);
+        currentRoute = new ArrayList<>();
+    }
+
+    public String[] convertArray(ArrayList<String> arrayList){
+        String[] array = new String[arrayList.size()];
+        for(int i=0; i < arrayList.size(); i++){
+            array[i] = arrayList.get(i);
+        }
+        return array;
+    }
+
 
 }

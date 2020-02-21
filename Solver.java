@@ -9,6 +9,7 @@ public class Solver{
     private ArrayList<String> routes = new ArrayList<>();
     private Maze maze;
     private ArrayList<Integer> currentRoute = new ArrayList<>();
+    private int totalMoves = 0;
 
 
     public Solver(){
@@ -18,8 +19,6 @@ public class Solver{
     public String[] solve(Maze maze){
         //Implemente su metodo aqui. Sientase libre de implementar métodos adicionales
         this.maze = maze;
-        System.out.println("start:" + maze.getStartSpace());
-        System.out.println("end:" + maze.getExitSpace());
         generateRoutes(maze.getStartSpace());
         String[] str = convertArray(routes);
         routes = new ArrayList<>();
@@ -27,7 +26,6 @@ public class Solver{
     }
 
     public String generateRoutes(int currentPosition){
-        
         currentRoute.add(currentPosition);
 
         int[] openRoutes = new int[]{    
@@ -47,14 +45,18 @@ public class Solver{
             if(route == this.maze.getExitSpace()){
                 currentRoute.add(route);
                 addRoute();
+                totalMoves = 0;
                 return null;
             }
 
-            if(this.maze.getMaxMoves() == currentRoute.size()-1){
-                currentRoute = new ArrayList<>();
+            if(this.maze.getMaxMoves() == totalMoves){
+                // currentRoute = new ArrayList<>();
+                currentRoute.remove(currentRoute.size()-1);
                 return null;
             }
             
+            
+            totalMoves++;
             generateRoutes(route);
 
         }
@@ -69,6 +71,7 @@ public class Solver{
         routeString = routeString.substring(0, routeString.length()-2) + "]";
         routes.add(routeString);
         currentRoute = new ArrayList<>();
+        // currentRoute.remove(currentRoute.size()-1);
     }
 
     public String[] convertArray(ArrayList<String> arrayList){

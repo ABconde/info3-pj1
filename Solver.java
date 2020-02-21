@@ -8,7 +8,6 @@ import java.util.ArrayList;
 public class Solver{
     private ArrayList<String> routes = new ArrayList<>();
     private Maze maze;
-    private int totalMoves = 0;
 
 
     public Solver(){
@@ -18,7 +17,7 @@ public class Solver{
     public String[] solve(Maze maze){
         //Implemente su metodo aqui. Sientase libre de implementar métodos adicionales
         this.maze = maze;
-        generateRoutes(maze.getStartSpace(), "[", 0);
+        generateRoutes(maze.getStartSpace(), "[", -1);
         String[] str = convertArray(routes);
         routes = new ArrayList<>();
         return str;
@@ -26,11 +25,11 @@ public class Solver{
 
     public String generateRoutes(int currentPosition, String routeS, int moves){
         routeS = routeS + currentPosition + ", ";
-
-        // if(currentPosition == this.maze.getExitSpace()){
-        //     addRoute(routeS);
-        //     return null;
-        // }
+        moves++;
+        if(currentPosition == this.maze.getExitSpace()){
+            addRoute(routeS);
+            return null;
+        }
 
         int[] openRoutes = new int[]{    
             this.maze.moveNorth(currentPosition),
@@ -46,19 +45,10 @@ public class Solver{
                 continue;
             }
 
-            if(route == this.maze.getExitSpace()){
-                routeS = routeS + route + ", ";
-                addRoute(routeS);
-                moves--;
-                routeS = routeS.substring(0, routeS.length()-3);
-                continue;
-            }
-
             if(this.maze.getMaxMoves() == moves){
                 return null;
             }
-            
-            moves++;
+
             generateRoutes(route, routeS, moves);
 
         }
@@ -77,6 +67,5 @@ public class Solver{
         }
         return array;
     }
-
 
 }
